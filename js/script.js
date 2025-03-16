@@ -1,78 +1,47 @@
-async function analisarMensagens() {
-    const input = document.getElementById("input-messages").value.trim();
-    const resultado = document.getElementById("result");
-    resultado.innerHTML = "";
-    fetch('./json/cooldowns.json')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Falha na requisição: ' + response.statusText);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Dados carregados com sucesso:', data);
-    })
-    .catch(error => {
-      console.error('Erro ao carregar o arquivo JSON:', error);
-    });
-  
-    
-    if (!input) {
-        resultado.innerHTML = "Por favor, insira algumas mensagens.";
-        return;
-    }
+function contarMagias() {
+    const logInput = document.getElementById("logInput").value;
+    const lines = logInput.split('\n');
+    const magiasPorJogador = {};
 
-    // Carrega o arquivo de cooldowns
-    const cooldowns = await fetch('json/cooldowns.json').then(res => res.json());
-
-    const linhas = input.split('\n');
-    const magiasUsadas = {};
-
-    // Extrai horários e magias
-    const horarioInicial = linhas[0].substring(0, 8);
-    const horarioFinal = linhas[linhas.length - 1].substring(0, 8);
-
-    const segundosInicio = converterParaSegundos(horarioInicial);
-    const segundosFinal = converterParaSegundos(horarioFinal);
-    const tempoTotalGameplay = segundosFinal - segundosInicio;
-
-    linhas.forEach(linha => {
-        const regex = /: (.*)/;
-        const match = linha.match(regex);
+    // Para cada linha do log
+    lines.forEach(line => {
+        // Regex para capturar o nome do jogador com espaços e a magia
+        const regex = /\d{2}:\d{2}:\d{2} (.+?) \[\d+\]: (.+)/;
+        const match = line.match(regex);
+        
         if (match) {
-            const magia = match[1].toLowerCase();
-            magiasUsadas[magia] = (magiasUsadas[magia] || 0) + 1;
+            const jogador = match[1].trim();  // Remover espaços extras ao redor do nome
+            const magia = match[2];
+
+            // Se o jogador ainda não existir, cria um objeto para ele
+            if (!magiasPorJogador[jogador]) {
+                magiasPorJogador[jogador] = {};
+            }
+
+            // Se a magia ainda não tiver sido contada, inicializa a contagem
+            if (!magiasPorJogador[jogador][magia]) {
+                magiasPorJogador[jogador][magia] = 0;
+            }
+
+            // Incrementa o contador da magia para o jogador
+            magiasPorJogador[jogador][magia]++;
         }
     });
 
-    // Cálculo do aproveitamento
-    let tempoTotalMagias = 0;
-    for (const magia in magiasUsadas) {
-        if (cooldowns[magia]) {
-            tempoTotalMagias += cooldowns[magia] * magiasUsadas[magia];
+    // Exibe os resultados na tela
+    const respostas = document.getElementById("respostas");
+    respostas.innerHTML = ''; // Limpa o conteúdo anterior
+
+    for (const jogador in magiasPorJogador) {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${jogador}:</strong><ul>`;
+        
+        // Lista as magias usadas por esse jogador
+        for (const magia in magiasPorJogador[jogador]) {
+            li.innerHTML += `<li>${magia}: ${magiasPorJogador[jogador][magia]}</li>`;
         }
+
+        li.innerHTML += '</ul>';
+        respostas.appendChild(li);
     }
-
-    const aproveitamento = ((tempoTotalMagias / tempoTotalGameplay) * 100).toFixed(2);
-
-    resultado.innerHTML = `
-        <p>Tempo total de gameplay: ${formatarTempo(tempoTotalGameplay)}</p>
-        <p>Aproveitamento com magias: ${aproveitamento}%</p>
-        <h3>Detalhes das magias usadas:</h3>
-        <ul>
-            ${Object.entries(magiasUsadas).map(([magia, qtd]) => `<li>${magia}: ${qtd}x</li>`).join('')}
-        </ul>
-    `;
-}
-
-function converterParaSegundos(horario) {
-    const [horas, minutos, segundos] = horario.split(':').map(Number);
-    return horas * 3600 + minutos * 60 + segundos;
-}
-
-function formatarTempo(segundos) {
-    const horas = Math.floor(segundos / 3600);
-    const minutos = Math.floor((segundos % 3600) / 60);
-    const segundosRestantes = segundos % 60;
-    return `${horas}h ${minutos}m ${segundosRestantes}s`;
 }

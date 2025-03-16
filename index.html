@@ -1,20 +1,23 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contador de Magias</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styless.css"> <!-- Caminho relativo para o CSS -->
 </head>
 <body>
     <div class="container">
-        <div class="box">
-            <textarea id="input-messages" rows="10" placeholder="Cole aqui as mensagens..."></textarea>
-            <button onclick="analisarMensagens()">Analisar</button>
+        <h1>Contador de Magias</h1>
+        <textarea id="logInput" placeholder="Cole o log aqui..." rows="10"></textarea>
+        <button onclick="contarMagias()">Contar Magias</button>
+
+        <div id="resultado">
+            <h2>Resultado:</h2>
+            <ul id="respostas"></ul>
         </div>
-        <div class="result" id="result"></div>
     </div>
-    <script src="js/script.js"></script>
+
+    <script src="js/script.js" defer></script> <!-- Caminho relativo para o JS -->
 </body>
 </html>

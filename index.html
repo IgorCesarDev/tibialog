@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Magias</title>
-    <link rel="stylesheet" href="css/styless.css"> <!-- Caminho relativo para o CSS -->
+    <title>TibiaLog</title>
+    <link rel="stylesheet" href="css/styless.css">
+    <link rel="icon" href="icone/icon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="container">
-        <h1>Contador de Magias</h1>
+        <h1>TibiaLog</h1>
         <textarea id="logInput" placeholder="Cole o log aqui..." rows="10"></textarea>
-        <button onclick="contarMagias()">Contar Magias</button>
+        <button onclick="contarMagias()">Calcular Log</button>
 
-        <div id="resultado">
+        <div id="resultado" class="resultado-container">
             <h2>Resultado:</h2>
             <ul id="respostas"></ul>
+            <button id="copiarResultadoBtn" onclick="copiarResultadoGeral()" style="display: none;">Copiar Resultado Geral</button>
         </div>
     </div>
 
-    <script src="js/script.js" defer></script> <!-- Caminho relativo para o JS -->
+    <script src="js/script.js" defer></script>
 </body>
 </html>
